@@ -134,7 +134,9 @@ export default {
         },
       });
       if (res.code !== 200) {
-        this.$message.error("用户名或密码错误");
+        this.$message.error(res.msg);
+        //刷新验证码
+        this.$refs.codeRef.refresh();
       } else {
         this.$store.commit(setUserState, {
           isLogin: true,

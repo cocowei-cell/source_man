@@ -4,7 +4,7 @@
 export default [
   {
     path: "/",
-    redirect: "/login",
+    redirect: "/index/submit",
   },
   {
     name: "login",
@@ -24,6 +24,7 @@ export default [
   {
     name: "index",
     path: "/index",
+    redirect:'/index/submit',
     component: () => import("@/view/index/index"), //注册路由
     children: [
       {
@@ -41,6 +42,11 @@ export default [
         name: "modyfypass",
         component: () => import("@/view/index/children/z-modifypass"),
       },
+      {
+        path: "submit",
+        name: "submit",
+        component: () => import("@/view/index/children/z-submit"),
+      }
     ],
   },
 ];

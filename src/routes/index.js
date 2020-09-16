@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:33
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-09 16:44:50
+ * @LastEditTime: 2020-09-16 22:12:44
  */
 import Vue from "vue";
 import Router from "vue-router";
@@ -60,7 +60,6 @@ router.beforeEach(async (to, from, next) => {
       return next("/login");
     }
   }
-
   next();
 });
 
