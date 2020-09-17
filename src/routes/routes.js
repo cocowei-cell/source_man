@@ -50,3 +50,16 @@ export default [
     ],
   },
 ];
+
+/* 
+  <p class="submit_title">请选择提交的学期</p>
+  <el-select v-model="time" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item._id"
+              :value="item.time"
+              :disabled="item.disabled"
+            >
+            </el-option>
+          </el-select>
+*/

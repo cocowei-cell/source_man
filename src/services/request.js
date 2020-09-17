@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-03 13:39:06
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-13 18:25:41
+ * @LastEditTime: 2020-09-17 22:25:05
  */
 import axios from "axios";
 import qs from "qs";
@@ -23,12 +23,14 @@ function request(options) {
     let token = sessionStorage.getItem("token");
     //自定义响应头一定要在后端配置res.header('Access-Allow-','token')
     if (token) {
-      config.headers = {
-        token,
-        ...config.headers,
-      };
+      config.headers.token = token;
     }
-    config.data = qs.stringify(options.data);
+
+    if (config.headers["Content-Type"] == "multipart/form-data") {
+      config.data = options.data;
+    } else {
+      config.data = qs.stringify(options.data);
+    }
     return config;
   });
   //响应后的拦截
