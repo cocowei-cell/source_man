@@ -45,4 +45,7 @@ body {
   content: "";
   clear: both;
 }
+.el-loading-text {
+  font-size: 18px !important;
+}
 </style>

@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:41
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-16 23:24:29
+ * @LastEditTime: 2020-09-19 23:57:06
  */
 import Vue from "vue";
 import Vuex from "vuex";
@@ -19,7 +19,7 @@ const store = new Vuex.Store({
     stuNumber: "", //忘记密码页面的学号
     index: 0,
     qqcode: "",
-    isOpen: false,
+    headerIndex:"4"
   },
   mutations: {
     [setUserState](state, { isLogin, token, userInfo }) {
@@ -38,19 +38,12 @@ const store = new Vuex.Store({
     setQQcode(state, payload) {
       state.qqcode = payload;
     },
-    setOpen(state, payload) {
-      state.isOpen = payload;
-    },
+    //设置首页的跳转链接
+    setHeaderIndex(state, payload) { 
+      state.headerIndex = payload;
+    }
   },
-  actions: {
-    //获取网站是否开启
-    async isOpen({ commit }) {
-      let res = await request({
-        url: "/api/others/getopen",
-      });
-      commit("setOpen", res.isOpen);
-    },
-  },
+  actions: {},
   getters: {},
 });
 

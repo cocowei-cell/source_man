@@ -6,24 +6,20 @@
 
 <template>
   <div>
-    <z-header/>
+    <z-header />
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import ZHeader from '@/components/content/z-header/z-header';
+import ZHeader from "@/components/content/z-header/z-header";
 export default {
-  name:'index',
-  components:{
-    ZHeader
+  name: "index",
+  components: {
+    ZHeader,
   },
-  created() {
-    //获取网站是否开启审核权限
-    this.$store.dispatch('isOpen');
-  }
-}
+  created() {},
+};
 </script>
 <style scoped>
-
 </style>

@@ -122,7 +122,7 @@ export default {
     },
     //注册
     regester() {
-      this.$router.push("/regester");
+      this.$router.replace("/regester");
     },
     async login() {
       let res = await request({
@@ -153,14 +153,14 @@ export default {
         sessionStorage.setItem("role", res.role);
         //判断角色，如果是管理员就跳转到管理员页面，反之，你懂得
         if (res.role === "admin") {
-          this.$router.push("/admin");
+          this.$router.replace("/admin");
         } else {
-          this.$router.push("/index");
+          this.$router.replace("/index");
         }
       }
     },
     lossPass() {
-      this.$router.push("/losspass")
+      this.$router.replace("/losspass")
     }
   },
 };

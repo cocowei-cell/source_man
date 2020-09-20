@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-03 13:39:06
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-17 22:25:05
+ * @LastEditTime: 2020-09-18 13:22:28
  */
 import axios from "axios";
 import qs from "qs";
@@ -25,7 +25,7 @@ function request(options) {
     if (token) {
       config.headers.token = token;
     }
-
+    // 如果类型为上传路由，那么不进行序列化
     if (config.headers["Content-Type"] == "multipart/form-data") {
       config.data = options.data;
     } else {
@@ -33,7 +33,7 @@ function request(options) {
     }
     return config;
   });
-  //响应后的拦截
+  //响应后的拦截 对数据进行格式化
   instance.interceptors.response.use((response) => {
     return response.data;
   });
