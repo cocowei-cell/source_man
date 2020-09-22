@@ -29,7 +29,7 @@ export default {
 }
 
 body {
-  min-width: 750px;
+  min-width: 1106px;
 }
 
 .fl {

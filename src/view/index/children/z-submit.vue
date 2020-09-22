@@ -1,7 +1,7 @@
 <template>
   <div>
     <z-center width="78%">
-      <el-card class="box-card">
+      <el-card class="box-card" v-loading="waiting">
         <!-- 头部 -->
         <div class="nav">
           <p class="submit_title">请选择提交的学期</p>
@@ -110,170 +110,16 @@
 <script>
 import ZCenter from "@/components/content/z-center/z-center";
 import request from "@/services/request";
+import Mixin from "@/mixin/submitMixin"; //获取表格数据混入
 export default {
   name: "z-submit",
+  mixins: [Mixin],
   components: {
     ZCenter,
   },
   data() {
     return {
-      submitInfo: [
-        {
-          item_number: "1-1",
-          description: "参加文化艺术、身心健康、体育类学生团体",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-        {
-          item_number: "1-2",
-          description: "参加小团体竞赛",
-          self_score: 0,
-          reason: "",
-          pictures: [],
-        },
-      ],
+      submitInfo: [], //提交的表单
       options: [], //时间参数
       time: "", //提交的学期
       isOpen: false, //是否开启审核
@@ -281,18 +127,27 @@ export default {
       dialogVisible: false, //是否显示图片展示区域,
       itemNumber: "", //上传项目标号,
       score: 0, //上传时的总分数
-      loading:true
+      waiting: false,
     };
   },
   methods: {
     //获取审核时间
     async getTime() {
-      this.loading = true;
-      let res = await request({
-        url: "/api/score/gettimes",
-      });
-      if (res.code == 200) {
-        this.options = res.time;
+      //如果缓存中有时间条目就获取，没有就从服务器重新请求
+      let timeTag = sessionStorage.getItem("time");
+      //从服务器重新请求
+      if (!timeTag) {
+        this.waiting = true;
+        let res = await request({
+          url: "/api/score/gettimes",
+        });
+        if (res.code == 200) {
+          this.options = res.time;
+          sessionStorage.setItem("time", JSON.stringify(res.time));
+          this.waiting = false;
+        }
+      } else {
+        this.options = JSON.parse(timeTag);
       }
       //  如果所有的学期均未开启审核就显示提示信息
       for (let i = 0, len = this.options.length; i < len; i++) {
@@ -302,10 +157,21 @@ export default {
           break;
         }
       }
-      // this.loading = false;
     },
-    async getInfo() {
 
+    addToInfo(data) {
+      let obj = {
+        reason: "",
+        pictures: [],
+        self_score: 0,
+      };
+      // 追加到数组中
+      data.forEach((item) => {
+        this.submitInfo.push({
+          ...obj,
+          ...item,
+        });
+      });
     },
     handleSuccess(res) {
       // res为服务器返回的数据
@@ -369,6 +235,14 @@ export default {
     },
     //上传
     async submit() {
+      if (+this.score === 0) {
+        this.$message.warning("素质为0分不用提交哦，系统默认为0分");
+        return;
+      } else if (this.score.toString() == "NaN") {
+        this.$message.warning("素质分数存在非法字符，请核查完毕再提交");
+        return;
+      }
+
       let tag = await this.$confirm(
         `是否提交表格，你提交的学期为：${this.time},自评分数为：${this.score}分`,
         "提交",
@@ -393,18 +267,23 @@ export default {
           method: "POST",
           data: {
             submit_form,
-            time:this.time
-          }
-        })
+            time: this.time,
+          },
+        });
         //关闭遮罩层
         loading.close();
-        if(res.code==200) {
+        if (res.code == 200) {
           this.$message.success("提交成功");
-          this.$router.push('/index/mysubmit')
+          this.$router.push({
+            path: "/index/mysubmit",
+            query: {
+              time: this.time,
+            },
+          });
           //设置首页选项为3
-          this.$store.commit('setHeaderIndex',"3");
+          this.$store.commit("setHeaderIndex", "3");
         } else {
-          this.$message.error("提交失败")
+          this.$message.error(res.msg);
         }
       }
     },
@@ -418,15 +297,13 @@ export default {
     },
   },
   created() {
+    //设置表头
+    this.$store.commit("setHeaderIndex", "4");
     //获取时间
     this.getTime();
     //获取表格结构
     this.getInfo();
   },
-  //页面挂载完成后显示
-  mounted() {
-    this.loading = false;
-  }
 };
 </script>
 <style scoped>
