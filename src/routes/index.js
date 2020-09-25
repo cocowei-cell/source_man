@@ -3,14 +3,14 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:33
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-16 22:12:44
+ * @LastEditTime: 2020-09-23 18:51:04
  */
 import Vue from "vue";
 import Router from "vue-router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import routes from "./routes";
-import auth from "../services/authToken/auth";   //验证token是否正确
+import auth from "../services/authToken/auth"; //验证token是否正确
 Vue.use(Router);
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -29,16 +29,18 @@ router.beforeEach(async (to, from, next) => {
   // console.log(to);
   let tokenTags = true;
   let adminTags = true;
-  let token = sessionStorage.getItem("token");  //取出token
-  let role = sessionStorage.getItem("role");   //取出角色信息
-  if (role !== "admin") {
-    adminTags = false;
-  }
+  let superTags = true;
+  let token = sessionStorage.getItem("token"); //取出token
+  // 验证token合法性
   if (token) {
-    let { code } = await auth(token);
+    let { code, role } = await auth(token);
     if (code !== 200) {
       sessionStorage.removeItem("token");
       tokenTags = false;
+    } else if (role !== "super") {
+      superTags = false;
+    } else if (role !== "admin") {
+      adminTags = false;
     }
   } else {
     tokenTags = false;
@@ -49,12 +51,25 @@ router.beforeEach(async (to, from, next) => {
     else return next("/login");
   }
   //路由保护管理员页面
-  if (to.path === "admin") {
+  // console.log(to);
+  if (to.path.includes("/admin")) {
     if (tokenTags) {
       if (adminTags) {
         return next();
       } else {
-        return next("/index");
+        return next("/login");
+      }
+    } else {
+      return next("/login");
+    }
+  }
+  // 路由保护超级管理员页面
+  if (to.path.includes("/super")) {
+    if (tokenTags) {
+      if (superTags) {
+        return next();
+      } else {
+        return next("/login");
       }
     } else {
       return next("/login");

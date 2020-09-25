@@ -37,6 +37,7 @@
             stripe
             border
             max-height="690"
+            v-loading="waiting"
           >
             <el-table-column prop="item_number" label="序号" width="180">
             </el-table-column>
@@ -136,15 +137,14 @@ export default {
       //如果缓存中有时间条目就获取，没有就从服务器重新请求
       let timeTag = sessionStorage.getItem("time");
       //从服务器重新请求
+      this.waiting = true;
       if (!timeTag) {
-        this.waiting = true;
         let res = await request({
           url: "/api/score/gettimes",
         });
         if (res.code == 200) {
           this.options = res.time;
           sessionStorage.setItem("time", JSON.stringify(res.time));
-          this.waiting = false;
         }
       } else {
         this.options = JSON.parse(timeTag);
@@ -157,6 +157,7 @@ export default {
           break;
         }
       }
+      this.waiting = false;
     },
 
     addToInfo(data) {

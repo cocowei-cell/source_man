@@ -3,12 +3,11 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:41
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-19 23:57:06
+ * @LastEditTime: 2020-09-26 00:37:01
  */
 import Vue from "vue";
 import Vuex from "vuex";
 import { setUserState, SETSTUNUMBER } from "./CONST"; //常量
-import request from "@/services/request";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({

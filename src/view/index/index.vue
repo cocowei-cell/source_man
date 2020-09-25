@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import ZHeader from "@/components/content/z-header/z-header";
+import ZHeader from "@/view/index/children/z-header";
 export default {
   name: "index",
   components: {

@@ -17,14 +17,14 @@ export default [
     component: () => import("@/view/regester/regester"), //注册路由
   },
   {
-    name:"losspass",
+    name: "losspass",
     path: "/losspass",
-    component: () => import("@/view/losspass/losspass")
+    component: () => import("@/view/losspass/losspass"),
   },
   {
     name: "index",
     path: "/index",
-    redirect:'/index/submit',
+    redirect: "/index/submit",
     component: () => import("@/view/index/index"), //注册路由
     children: [
       {
@@ -40,26 +40,46 @@ export default [
       {
         path: "modifypass",
         name: "modyfypass",
-        component: () => import("@/view/index/children/z-modifypass"),
+        component: () =>
+          import("@/components/content/z-modifypass/z-modifypass"),
       },
       {
         path: "submit",
         name: "submit",
         component: () => import("@/view/index/children/z-submit"),
-      }
+      },
     ],
+  },
+  {
+    name: "super",
+    path: "/super",
+    redirect:"/super/userinfo",
+    component: () => import("@/view/super/super"), //超级管理员页面
+    children: [
+      {
+        name: "modifypass",
+        path: "modifypass",
+        component: () =>
+          import("@/components/content/z-modifypass/z-modifypass"),
+      },
+      {
+        name: "userinfo",
+        path: "userinfo",
+        component: () =>
+          import("@/view/super/children/z-userinfo"),
+      },
+      {
+        name: "table",
+        path: "table",
+        component: () =>
+          import("@/view/super/children/z-table"),
+      },
+    ],
+  },
+  {
+    name: "404",
+    path: "*",
+    component: () => import("@/view/404"), //404页面
   },
 ];
 
-/* 
-  <p class="submit_title">请选择提交的学期</p>
-  <el-select v-model="time" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item._id"
-              :value="item.time"
-              :disabled="item.disabled"
-            >
-            </el-option>
-          </el-select>
-*/

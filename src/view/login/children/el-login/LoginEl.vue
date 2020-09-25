@@ -150,18 +150,21 @@ export default {
         });
         // console.log(res);
         sessionStorage.setItem("token", res.token);
-        sessionStorage.setItem("role", res.role);
         //判断角色，如果是管理员就跳转到管理员页面，反之，你懂得
-        if (res.role === "admin") {
-          this.$router.replace("/admin");
+        if (this.isAdmin === true) {
+          if (res.role === "super") {
+            this.$router.replace("/super");
+          } else if (res.role === "admin") {
+            this.$router.replace("/admin");
+          }
         } else {
           this.$router.replace("/index");
         }
       }
     },
     lossPass() {
-      this.$router.replace("/losspass")
-    }
+      this.$router.replace("/losspass");
+    },
   },
 };
 </script>
@@ -179,5 +182,4 @@ export default {
   padding-left: 100px;
   margin-bottom: 50px;
 }
-
 </style>

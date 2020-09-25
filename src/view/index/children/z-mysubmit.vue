@@ -185,6 +185,7 @@ export default {
     };
   },
   methods: {
+    // 获取学期时间
     async getTime() {
       let timeTag = sessionStorage.getItem("time");
       //从服务器重新请求
@@ -194,10 +195,12 @@ export default {
         });
         if (res.code == 200) {
           this.options = res.time;
+          this.time = this.options[0].time
           sessionStorage.setItem("time", JSON.stringify(res.time));
         }
       } else {
         this.options = JSON.parse(timeTag);
+        this.time = this.options[0].time
       }
     },
     //获取筛选的学期，请求对应的数据
@@ -229,6 +232,7 @@ export default {
       this.getInfo();
       //获取时间是否过期
       // console.log(res);
+      // 混合表格 将所有表单项和有数据的项合并
       res.data.forEach((v) => {
         let item_number = v.item_number;
         this.submitInfo.some((item) => {
@@ -242,6 +246,7 @@ export default {
           }
         });
       });
+      // 等待提示关闭
       this.tagLod = false;
     },
     addToInfo(data) {
@@ -376,6 +381,7 @@ export default {
         token: sessionStorage.getItem("token"),
       };
     },
+    // 计算总分
     totalScore() {
       let total = 0;
       this.submitInfo.forEach((v) => {
@@ -387,8 +393,9 @@ export default {
   created() {
     this.$store.commit("setHeaderIndex", "3");
     this.getTime();
-    //获取从刚提交那里的时间
+    //获取从刚提交那里的传递过来的时间，方便跳转后直接显示刚才提交的信息
     let time = this.$route.query.time;
+    // 作判断，如果没有时间就不重新获取，否则造成首次打开出现表格信息的异常
     if (time) {
       this.time = time;
       this.slectForm();
