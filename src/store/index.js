@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:41
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-26 00:37:01
+ * @LastEditTime: 2020-09-26 09:57:16
  */
 import Vue from "vue";
 import Vuex from "vuex";
@@ -42,8 +42,6 @@ const store = new Vuex.Store({
       state.headerIndex = payload;
     }
   },
-  actions: {},
-  getters: {},
 });
 
 export default store;

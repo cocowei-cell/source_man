@@ -4,7 +4,7 @@
 export default [
   {
     path: "/",
-    redirect: "/index/submit",
+    redirect: "/admin",
   },
   {
     name: "login",
@@ -51,9 +51,26 @@ export default [
     ],
   },
   {
+    name: "admin",
+    path: "/admin",
+    component: () => import("@/view/admin/admin"),
+    children: [
+      {
+        name: "checking",
+        path: "checking",
+        component: () => import("@/view/admin/children/z-checking"),
+      },
+      {
+        name: "mycheck",
+        path: "mycheck",
+        component: () => import("@/view/admin/children/z-mycheck"),
+      },
+    ],
+  },
+  {
     name: "super",
     path: "/super",
-    redirect:"/super/userinfo",
+    redirect: "/super/userinfo",
     component: () => import("@/view/super/super"), //超级管理员页面
     children: [
       {
@@ -65,14 +82,22 @@ export default [
       {
         name: "userinfo",
         path: "userinfo",
-        component: () =>
-          import("@/view/super/children/z-userinfo"),
+        component: () => import("@/view/super/children/z-userinfo"),
       },
       {
         name: "table",
         path: "table",
-        component: () =>
-          import("@/view/super/children/z-table"),
+        component: () => import("@/view/super/children/z-table"),
+      },
+      {
+        name: "info",
+        path: "info",
+        component: () => import("@/view/super/children/z-info"),
+      },
+      {
+        name: "time",
+        path: "time",
+        component: () => import("@/view/super/children/z-time"),
       },
     ],
   },
@@ -82,4 +107,3 @@ export default [
     component: () => import("@/view/404"), //404页面
   },
 ];
-

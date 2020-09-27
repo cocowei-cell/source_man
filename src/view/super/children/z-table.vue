@@ -118,6 +118,7 @@ export default {
   methods: {
     // 获取表单项
     async getItem(page) {
+      this.waiting =true
       let res = await request({
         url: "/api/super/getitems/" + page,
       });
@@ -129,6 +130,7 @@ export default {
       } else {
         this.$message.error(res.msg);
       }
+      this.waiting = false;
     },
     // 添加项目
     async addItem() {
@@ -141,6 +143,7 @@ export default {
         this.$message.error("请输入项目描述信息！");
         return;
       }
+      this.waiting = true
       let res = await request({
         url: "/api/super/additems",
         method: "POST",
@@ -157,6 +160,7 @@ export default {
       } else {
         this.$message.error(res.msg);
       }
+      this.waiting = false;
     },
     // 当前页面的处理函数
     currentHandler(page) {

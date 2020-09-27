@@ -150,7 +150,7 @@ export default {
         });
         // console.log(res);
         sessionStorage.setItem("token", res.token);
-        //判断角色，如果是管理员就跳转到管理员页面，反之，你懂得
+        //判断角色，如果是管理员就跳转到管理员页面
         if (this.isAdmin === true) {
           if (res.role === "super") {
             this.$router.replace("/super");

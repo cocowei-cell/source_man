@@ -64,9 +64,49 @@
             width="120"
           >
           </el-table-column>
+          <el-table-column label="操作" width="120">
+            <template slot-scope="oper">
+              <el-button
+                @click="handleError(oper.row)"
+                :disabled="!state"
+                type="text"
+                title="如果你对此项审核有疑问请点击这里"
+                >对此有疑问？</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </z-center>
+    <!-- 异议提交显示 -->
+    <el-dialog
+      :title="error.item_number"
+      :visible.sync="showDialog"
+      width="55%"
+    >
+      <el-form label-width="100px">
+        <el-form-item label="描述:">
+          <span>{{ error.description }}</span>
+        </el-form-item>
+        <el-form-item label="第一审核人:">
+          <span>{{ error.first.score }}</span>
+        </el-form-item>
+        <el-form-item label="第二审核人:">
+          <span>{{ error.second.score }}</span>
+        </el-form-item>
+        <el-form-item label="自评分数:">
+          <span>{{ error.self_score }}</span>
+        </el-form-item>
+        <el-form-item label="你的异议原因:">
+          <el-input v-model="error.reason" type="text"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="submitError" class="fr" type="primary"
+            >提交</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,6 +129,11 @@ export default {
       firstScore: "无", //第一审核人分数
       secondScore: "无", //第二审核人分数
       tagTime: false,
+      error: {
+        first: {},
+        second: {},
+      },
+      showDialog: false,
     };
   },
   methods: {
@@ -136,6 +181,43 @@ export default {
       }
       this.tagTime = false;
       this.tagLod = false;
+    },
+    //处理疑问
+    handleError({ item_number, self_score, description, first, second, _id }) {
+      this.error = {
+        item_number: `项目编号:${item_number} (如果你的评分不正确，请提交你的原因)`,
+        description,
+        first,
+        second,
+        self_score,
+        _id,
+        reason: "",
+      };
+      this.showDialog = true;
+    },
+    //提交错误
+    async submitError() {
+      let { _id, reason,second } = this.error;
+      if (reason.trim() === "") {
+        this.$message.error("请输入原因");
+        return;
+      }
+      //请求对应的数据
+      let res = await request({
+        url: "/api/others/submiterror",
+        method: "POST",
+        data: {
+          item_id: _id,
+          reason,
+          check_person: second.stu_number,
+        },
+      });
+      if(res.code == 200) {
+        this.$message.success(res.msg);
+        this.showDialog = false;
+      } else {
+        this.$message.error(res.msg);
+      }
     },
   },
   watch: {

@@ -75,7 +75,7 @@
             </el-option>
           </el-select>
           <span
-            >normal为普通用户，admin为普通审核人，super为超级管理员(可以设置其他人的权限)</span
+            style="margin-left:15px;">normal为普通用户，admin为普通审核人，super为超级管理员(可以设置其他人的权限)</span
           >
         </el-form-item>
         <el-form-item class="submit_btn">
@@ -144,6 +144,7 @@ export default {
     // 提交
     async submit() {
       // 提交数据
+      this.waiting = true;
       let res = await request({
         url: "/api/super/modifyinfo",
         method: "put",
@@ -161,9 +162,11 @@ export default {
       } else {
         this.$message.error(res.msg);
       }
+      this.waiting = false;
     },
     // 根据指定的页码获取数据
     async getAllUsers(page) {
+      this.waiting = true;
       let res = await request({
         url: "/api/super/getuser/" + page,
       });
@@ -173,6 +176,7 @@ export default {
       this.currentPage = result.page;
       this.userInfo = [];
       this.userInfo = result.records;
+      this.waiting = false;
     },
     async getOneInfo() {
       // 校验正确格式的学号
@@ -181,6 +185,7 @@ export default {
         return;
       }
       // 请求对应的信息
+      this.waiting = true;
       let res = await request({
         url: "/api/super/getoneuser",
         params: {
@@ -194,6 +199,7 @@ export default {
       } else {
         this.$message.error(res.msg);
       }
+      this.waiting = false;
     },
   },
   watch: {

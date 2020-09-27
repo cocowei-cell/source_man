@@ -32,40 +32,14 @@
 </template>
 
 <script>
-import { setUserState } from "@/store/CONST";
-import ZCenter from "@/components/content/z-center/z-center";
 import ZAside from "@/view/super/children/z-aside"
 import request from "@/services/request";
+import adminMixin from "@/mixin/adminMix";
 export default {
   name: "super",
+  mixins:[adminMixin],
   components: {
-    ZCenter,
     ZAside
-  },
-  data() {
-    return {
-
-    }
-  },
-  methods: {
-    //退出
-    logOut() {
-      sessionStorage.clear();
-      this.$store.commit(setUserState, { isLogin: false });
-      this.$router.replace("/login");
-      // console.log(123123)
-    },
-    // 修改密码
-    modifypass() {
-      // console.log(123)
-      this.$router.push("/super/modifypass")
-    },
-  },
-  computed:{
-    // 用户信息展示
-    userInfo() {
-      return `${this.$store.state.userInfo.stu_number}${this.$store.state.userInfo.stu_name}`;
-    }
   }
 };
 </script>
