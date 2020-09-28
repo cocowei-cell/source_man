@@ -53,6 +53,7 @@ export default [
   {
     name: "admin",
     path: "/admin",
+    redirect:'/admin/checking',
     component: () => import("@/view/admin/admin"),
     children: [
       {

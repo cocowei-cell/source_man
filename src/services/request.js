@@ -3,16 +3,19 @@
  * @Author: zzz
  * @Date: 2020-09-03 13:39:06
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-18 13:22:28
+ * @LastEditTime: 2020-09-28 16:55:32
  */
 import axios from "axios";
 import qs from "qs";
 import { BaseURL } from "../config";
+
+
 /**
  * @description: 封装请求处理函数
  * @param {Object}
  * @return {Promise}
  */
+
 function request(options) {
   const instance = axios.create({
     baseURL: BaseURL,
