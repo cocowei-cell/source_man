@@ -85,18 +85,23 @@
       width="55%"
     >
       <el-form label-width="100px">
+        <!-- 描述 -->
         <el-form-item label="描述:">
           <span>{{ error.description }}</span>
         </el-form-item>
-        <el-form-item label="第一审核人:">
-          <span>{{ error.first.score }}</span>
-        </el-form-item>
-        <el-form-item label="第二审核人:">
-          <span>{{ error.second.score }}</span>
-        </el-form-item>
+        <!-- 自评分数 -->
         <el-form-item label="自评分数:">
           <span>{{ error.self_score }}</span>
         </el-form-item>
+        <!-- 第一审核人分数 -->
+        <el-form-item label="第一审核人:">
+          <span>{{ error.first.score }}</span>
+        </el-form-item>
+        <!-- 第二审核人分数 -->
+        <el-form-item label="第二审核人:">
+          <span>{{ error.second.score }}</span>
+        </el-form-item>
+        <!-- 异议的原因 -->
         <el-form-item label="你的异议原因:">
           <el-input v-model="error.reason" type="text"></el-input>
         </el-form-item>
@@ -169,6 +174,7 @@ export default {
           time: this.time,
         },
       });
+      // console.log(result)
       this.submitInfo = result.data.info;
       this.selfScore = result.data.selfTotal;
       this.state = result.data.is_checked;
@@ -197,22 +203,22 @@ export default {
     },
     //提交错误
     async submitError() {
-      let { _id, reason,second } = this.error;
+      let { _id, reason, second } = this.error;
       if (reason.trim() === "") {
         this.$message.error("请输入原因");
         return;
       }
-      //请求对应的数据
+      //提交对应的数据
       let res = await request({
         url: "/api/others/submiterror",
         method: "POST",
         data: {
           item_id: _id,
           reason,
-          check_person: second.stu_number,
+          check_person: second.user._id,
         },
       });
-      if(res.code == 200) {
+      if (res.code == 200) {
         this.$message.success(res.msg);
         this.showDialog = false;
       } else {

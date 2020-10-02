@@ -45,6 +45,11 @@ export default {
   components: {
     ZAdminAside,
   },
+  methods:{
+    modifypass() {
+      this.$router.push('/admin/modifypass')
+    }
+  }
 };
 </script>
 <style scoped>

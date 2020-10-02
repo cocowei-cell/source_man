@@ -111,7 +111,7 @@
     >
       <!-- 说明区域 -->
       <el-alert
-        title="说明：审核状态显示未完成审核代表第一审核人或第二审核人未审核，最终总分数以第二审核人为准"
+        title="说明：最终总分数以第二审核人为准，请根据规定正确的评估分数，不要跨级填写！"
         type="warning"
         effect="dark"
       >
@@ -332,6 +332,31 @@ export default {
       this.waiting = false;
     },
     // 审核提交
+    async refresh() {
+      this.waiting = true;
+      let result = await request({
+        url: "/api/admin/getitem",
+        params: {
+          mode: this.selectMode,
+          time: this.selectTime,
+          cla_num: this.navClass,
+        },
+      });
+      if (result.code == 200) {
+        let { data } = result;
+        data.forEach((v) => {
+          if (v.first_per !== "无") {
+            v.first_per = v.first_per.stu_name;
+          }
+          if (v.second_per !== "无") {
+            v.second_per = v.second_per.stu_name;
+          }
+        });
+        this.checkData = [];
+        this.checkData = data;
+      }
+      this.waiting = false;
+    },
     async submitItem() {
       // 获取数据
       const dataArr = [];
@@ -342,9 +367,24 @@ export default {
           second: v.second,
         });
       });
+      // 提交请求
       let res = await request({
-        url:"/api/admin/submititem"
-      })
+        url: "/api/admin/submititem",
+        method: "put",
+        data: {
+          dataArr,
+          author: this.author,
+        },
+      });
+      if (res.code == 200) {
+        this.$message.success("提交成功");
+        //重新获取数据
+        this.refresh();
+        // 关闭弹出框
+        this.checkShow = false;
+      } else {
+        this.$message.error(res.msg);
+      }
     },
   },
   created() {

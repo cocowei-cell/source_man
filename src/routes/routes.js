@@ -53,7 +53,7 @@ export default [
   {
     name: "admin",
     path: "/admin",
-    redirect:'/admin/checking',
+    redirect: "/admin/checking",
     component: () => import("@/view/admin/admin"),
     children: [
       {
@@ -65,6 +65,22 @@ export default [
         name: "mycheck",
         path: "mycheck",
         component: () => import("@/view/admin/children/z-mycheck"),
+      },
+      {
+        name: "error",
+        path: "error",
+        component: () => import("@/view/admin/children/z-error"),
+      },
+      {
+        name: "modifypass_admin",
+        path: "modifypass",
+        component: () =>
+          import("@/components/content/z-modifypass/z-modifypass"),
+      },
+      {
+        name: "info",
+        path: "info",
+        component: () => import("@/components/content/z-info/z-info"),
       },
     ],
   },

@@ -7,7 +7,9 @@
 <template>
   <div>
     <z-header />
-    <router-view></router-view>
+    <keep-alive exclude="z-submit">
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 

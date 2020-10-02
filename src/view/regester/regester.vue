@@ -33,6 +33,14 @@
         ></el-input>
       </el-form-item>
 
+      <el-form-item label="学院 / 专业">
+        <el-cascader
+          v-model="college"
+          :options="collegeData"
+          :props="{ expandTrigger: 'hover' }"
+        ></el-cascader>
+      </el-form-item>
+
       <el-form-item label="QQ邮箱" prop="email">
         <el-input
           type="text"
@@ -164,6 +172,8 @@ export default {
         stuName: "",
         email: "",
       },
+      collegeData: [],
+      college: "",
       errorTags: false,
       rules: {
         stuNum: [{ validator: checkNum, trigger: "blur" }],
@@ -199,6 +209,10 @@ export default {
           return false;
         }
       });
+    },
+    // 获取二级联动学院与专业数据
+    async getCollegeData() {
+      
     },
     // 重置表单
     resetForm(formName) {

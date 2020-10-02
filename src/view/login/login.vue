@@ -3,11 +3,11 @@
  * @Author: zzz
  * @Date: 2020-09-02 13:19:28
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-27 22:29:20
+ * @LastEditTime: 2020-09-29 13:33:15
 -->
 <template>
   <div class="login">
-    <z-header class="header-login" title="SPAd单页面" />
+    <z-header class="header-login" title="素质分审核系统" />
     <z-tabs class="login-form" />
   </div>
 </template>
