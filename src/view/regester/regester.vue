@@ -82,9 +82,10 @@ import ZCode from "@/components/content/z-code/z-code";
 
 import request from "@/services/request";
 import delayDo from "@/util/delayDo";
-
+import collegeData from "@/mixin/collegeData"
 export default {
   name: "regester",
+  mixins:[collegeData],
   components: {
     ZHeader,
     ZCode,
@@ -172,8 +173,6 @@ export default {
         stuName: "",
         email: "",
       },
-      collegeData: [],
-      college: "",
       errorTags: false,
       rules: {
         stuNum: [{ validator: checkNum, trigger: "blur" }],
@@ -210,10 +209,6 @@ export default {
         }
       });
     },
-    // 获取二级联动学院与专业数据
-    async getCollegeData() {
-      
-    },
     // 重置表单
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -227,6 +222,7 @@ export default {
           stu_pass: this.ruleForm.stuPass,
           stu_email: this.ruleForm.email,
           stu_class: this.ruleForm.stuClass,
+          college:this.college
         };
         let { msg, code } = await request({
           url: "/api/user/regester",
@@ -266,6 +262,9 @@ export default {
       },
       deep: true,
     },
+  },
+  created() {
+    this.getCollegeData()
   },
 };
 </script>

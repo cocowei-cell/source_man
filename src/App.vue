@@ -13,11 +13,11 @@ export default {
   /* 
       页面刚创建时候让其返回登录页面，因为其刷新后会造成Vuex初始化，造成一些功能出现异常
    */
- /*  created() {
+  created() {
     sessionStorage.clear();
     this.$store.commit(setUserState, {});
     this.$router.replace("/login");
-  }, */
+  },
 };
 </script>
 

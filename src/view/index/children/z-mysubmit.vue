@@ -195,12 +195,12 @@ export default {
         });
         if (res.code == 200) {
           this.options = res.time;
-          this.time = this.options[0].time
+          this.time = this.options[0].time;
           sessionStorage.setItem("time", JSON.stringify(res.time));
         }
       } else {
         this.options = JSON.parse(timeTag);
-        this.time = this.options[0].time
+        this.time = this.options[0].time;
       }
     },
     //获取筛选的学期，请求对应的数据
@@ -390,9 +390,9 @@ export default {
       return total;
     },
   },
-  created() {
+  async created() {
     this.$store.commit("setHeaderIndex", "3");
-    this.getTime();
+    await this.getTime();
     //获取从刚提交那里的传递过来的时间，方便跳转后直接显示刚才提交的信息
     let time = this.$route.query.time;
     // 作判断，如果没有时间就不重新获取，否则造成首次打开出现表格信息的异常
@@ -400,6 +400,7 @@ export default {
       this.time = time;
       this.slectForm();
     }
+    await this.slectForm();
   },
 };
 </script>

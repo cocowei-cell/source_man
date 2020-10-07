@@ -31,6 +31,10 @@
           <el-form-item>
             <el-button @click="addTime" type="primary">添加</el-button>
           </el-form-item>
+          <el-form-item label="是否开启审核人审核权限： " label-width="200px">
+            <el-switch @change="handleOpenChecker" v-model="isOpenChecker">
+            </el-switch>
+          </el-form-item>
         </el-form>
       </div>
       <!-- 右边区域 -->
@@ -54,17 +58,6 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- 分页
-        <el-pagination
-          class="pagination"
-          @current-change="currentHandler"
-          background
-          layout="prev, pager, next"
-          :total="pageData.total"
-          :page-size="pageData.size"
-          :current-page.sync="currentPage"
-        >
-        </el-pagination> -->
       </div>
     </div>
   </div>
@@ -81,6 +74,7 @@ export default {
         time: "",
         isOpen: false,
       },
+      isOpenChecker: false,
       // 表格数据项
       timeInfo: [],
       // 是否开启审核参数
@@ -152,9 +146,40 @@ export default {
         data.isOpen = !data.isOpen;
       }
     },
+    async handleOpenChecker() {
+      let tag = await this.$confirm(`是否修改审核人的审核权限`, "修改权限", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).catch((err) => err);
+
+      if (tag === "confirm") {
+        let res = await request({
+          url: "/api/super/modifycheck",
+          method: "POST",
+          data: {
+            auth: this.isOpenChecker,
+          },
+        });
+        if (res.code == 200) {
+          this.$message.success(res.msg);
+        } else {
+          this.$message.error(res.msg);
+        }
+      } else {
+        this.isOpenChecker = !this.isOpenChecker;
+      }
+    },
+    async getOpen() {
+      let res = await request({
+        url: "/api/others/getisopen",
+      });
+      this.isOpenChecker = res.isOpen;
+    },
   },
   created() {
     this.getTime();
+    this.getOpen();
   },
 };
 </script>

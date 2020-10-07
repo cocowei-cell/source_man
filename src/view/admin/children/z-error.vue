@@ -13,6 +13,7 @@
       border
       max-height="690"
       v-loading="waiting"
+      v-if="isOpenAdmin"
     >
       <el-table-column prop="item_id.along_time" label="所属学期">
       </el-table-column>
@@ -35,6 +36,7 @@
         </template>
       </el-table-column>
     </el-table>
+    <z-close v-else/>
     <!-- 错误信息展示框 -->
     <el-dialog :title="title" :visible.sync="dialogShown">
       <el-alert
@@ -93,8 +95,14 @@
 
 <script>
 import request from "@/services/request";
+import AdminOpen from "@/mixin/getAdminOpen"
+import ZClose from "./z-close";
 export default {
   name: "z-error",
+  mixins:[AdminOpen],
+  components: {
+ZClose
+  },
   data() {
     return {
       // 错误信息对象

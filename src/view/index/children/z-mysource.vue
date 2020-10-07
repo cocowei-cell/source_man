@@ -174,7 +174,10 @@ export default {
           time: this.time,
         },
       });
-      // console.log(result)
+      if (result.data.info.length === 0) {
+        this.tagLod = false;
+        return this.$message.warning("该学期你没有提交，暂无数据");
+      }
       this.submitInfo = result.data.info;
       this.selfScore = result.data.selfTotal;
       this.state = result.data.is_checked;
@@ -231,9 +234,10 @@ export default {
       this.tagTime = true;
     },
   },
-  created() {
+  async created() {
     this.$store.commit("setHeaderIndex", "2");
-    this.getTime();
+    await this.getTime();
+    await this.slectForm();
   },
 };
 </script>

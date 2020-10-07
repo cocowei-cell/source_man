@@ -107,14 +107,19 @@ export default [
         component: () => import("@/view/super/children/z-table"),
       },
       {
-        name: "info",
+        name: "info_super",
         path: "info",
-        component: () => import("@/view/super/children/z-info"),
+        component: () => import("@/components/content/z-info/z-info"),
       },
       {
         name: "time",
         path: "time",
         component: () => import("@/view/super/children/z-time"),
+      },
+      {
+        name: "college",
+        path: "college",
+        component: () => import("@/view/super/children/z-college"),
       },
     ],
   },

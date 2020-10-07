@@ -23,7 +23,7 @@
       <!-- 主区域 -->
       <el-main>
         <!-- 缓存组件 -->
-        <keep-alive>
+        <keep-alive exclude="userinfo">
           <router-view></router-view>
         </keep-alive>
       </el-main>

@@ -3,18 +3,21 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:41
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-10-02 16:57:36
+ * @LastEditTime: 2020-10-05 22:13:59
  */
 import Vue from "vue";
 import Vuex from "vuex";
 import { setUserState, SETSTUNUMBER } from "./CONST"; //常量
-import request from "@/services/request"
+import request from "@/services/request";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
     isLogin: false, //是否登录
-    userInfo: {}, //用户信息
+    userInfo: {
+      stu_number: "",
+      stu_name: "",
+    }, //用户信息
     token: "", //token值
     stuNumber: "", //忘记密码页面的学号
     index: 0,

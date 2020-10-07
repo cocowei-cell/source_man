@@ -31,6 +31,10 @@
         >
           <el-table-column prop="stu_number" label="学号"> </el-table-column>
           <el-table-column prop="stu_name" label="姓名"> </el-table-column>
+          <el-table-column prop="college.college_name" label="学院">
+          </el-table-column>
+          <el-table-column prop="profession.profess_name" label="专业">
+          </el-table-column>
           <el-table-column prop="stu_class" label="班级"> </el-table-column>
           <el-table-column prop="stu_email" label="邮箱"> </el-table-column>
           <el-table-column prop="role" label="角色"> </el-table-column>
@@ -46,18 +50,28 @@
     </div>
     <!-- 用户信息展示区域 -->
     <el-dialog :title="diaTitle" :visible.sync="diaShow" width="55%">
-      <el-form label-width="80px">
+      <el-form label-width="100px">
         <el-form-item label="学号:">
           <span>{{ dialogData.stu_number }}</span>
         </el-form-item>
+        <!-- 姓名 -->
         <el-form-item label="姓名:">
           <span>{{ dialogData.stu_name }}</span>
         </el-form-item>
+        <!-- 班级 -->
         <el-form-item label="班级:">
           <el-input
             v-model="dialogData.stu_class"
             placeholder="班级"
           ></el-input>
+        </el-form-item>
+        <!-- 学院 -->
+        <el-form-item label="学院 / 专业">
+          <el-cascader
+            v-model="dialogData.colleges"
+            :options="collegeData"
+            :props="{ expandTrigger: 'hover' }"
+          ></el-cascader>
         </el-form-item>
         <el-form-item label="邮箱:">
           <el-input
@@ -74,8 +88,8 @@
             >
             </el-option>
           </el-select>
-          <span
-            style="margin-left:15px;">normal为普通用户，admin为普通审核人，super为超级管理员(可以设置其他人的权限)</span
+          <span style="margin-left: 15px"
+            >normal为普通用户，admin为普通审核人，super为超级管理员(可以设置其他人的权限)</span
           >
         </el-form-item>
         <el-form-item class="submit_btn">
@@ -99,10 +113,11 @@
 <script>
 import request from "@/services/request";
 export default {
-  name: "z-userinfo",
+  name: "userinfo",
   data() {
     return {
       stu_num: "",
+      urlType: "",
       currentPage: 1,
       userInfo: [],
       waiting: false,
@@ -119,20 +134,35 @@ export default {
           value: "super",
         },
       ],
+      // 学院和专业数据
+      collegeData: [],
       dialogData: {}, //对话框信息展示
       pageData: {}, //分页展示信息
     };
   },
   methods: {
     // 数据信息展示
-    show({ stu_number, stu_name, _id, role, stu_class, stu_email }) {
-      this.diaTitle = stu_number + stu_name;
+    show({
+      stu_number,
+      stu_name,
+      _id,
+      role,
+      stu_class,
+      stu_email,
+      college,
+      profession,
+    }) {
+      this.getCollegeData();
+      let colleges = [];
+      colleges.push(college._id, profession._id);
+      this.diaTitle = stu_number + stu_name + " 您可以修改该用户的信息以及权限";
       this.diaShow = true;
       this.dialogData = {
         stu_number,
         stu_name,
         _id,
         stu_class,
+        colleges,
         stu_email,
         role,
       };
@@ -140,6 +170,20 @@ export default {
     currentHandler(page) {
       this.getAllUsers(page);
       this.currentPage = page;
+    },
+    // 获取专业数据 缓存策略
+    async getCollegeData() {
+      let tagData = sessionStorage.getItem("college");
+      if (!tagData) {
+        let { data } = await request({
+          url: "/api/others/getcolleges",
+        });
+        // 缓存
+        sessionStorage.setItem("college", JSON.stringify(data));
+        this.collegeData = data;
+      } else {
+        this.collegeData = JSON.parse(tagData);
+      }
     },
     // 提交
     async submit() {
@@ -153,6 +197,7 @@ export default {
           stu_email: this.dialogData.stu_email,
           stu_class: this.dialogData.stu_class,
           auth: this.dialogData.role,
+          colleges: this.dialogData.colleges,
         },
       });
       if (res.code == 200) {
@@ -168,7 +213,10 @@ export default {
     async getAllUsers(page) {
       this.waiting = true;
       let res = await request({
-        url: "/api/super/getuser/" + page,
+        url: `/api/super/getuser/` + page,
+        params: {
+          type: this.urlType,
+        },
       });
       const { result } = res;
       this.pageData.total = result.total;
@@ -208,8 +256,13 @@ export default {
         this.getAllUsers(this.currentPage);
       }
     },
+    "$route.query.type"(newV) {
+      this.urlType = newV;
+      this.getAllUsers(1);
+    },
   },
   created() {
+    this.urlType = this.$route.query.type;
     this.getAllUsers(1);
   },
 };

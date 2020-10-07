@@ -122,7 +122,7 @@ export default {
     },
     //注册
     regester() {
-      this.$router.replace("/regester");
+      this.$router.push("/regester");
     },
     async login() {
       let res = await request({
@@ -156,6 +156,8 @@ export default {
             this.$router.replace("/super");
           } else if (res.role === "admin") {
             this.$router.replace("/admin");
+          } else {
+            this.$message.error("你不是管理员，请与后台联系进行修改权限")
           }
         } else {
           this.$router.replace("/index");
@@ -163,7 +165,7 @@ export default {
       }
     },
     lossPass() {
-      this.$router.replace("/losspass");
+      this.$router.push("/losspass");
     },
   },
 };

@@ -5,149 +5,99 @@
       <el-breadcrumb-item>审核表格</el-breadcrumb-item>
       <el-breadcrumb-item>审核</el-breadcrumb-item>
     </el-breadcrumb>
-    <!-- 主体区域 -->
-    <!-- banner区域 -->
-    <div class="banner">
-      <!-- 表单选区 -->
-      <el-form label-width="90px" inline>
-        <!-- 审核的班级 -->
-        <el-form-item label="班级或学号">
-          <el-input
-            v-model="navClass"
-            placeholder="请输入你审核的班级或学号"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="selectMode">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+    <div v-if="isOpenAdmin">
+      <!-- 主体区域 -->
+      <!-- banner区域 -->
+      <div class="banner">
+        <!-- 表单选区 -->
+        <el-form label-width="90px" inline>
+          <!-- 审核的班级 -->
+          <el-form-item label="班级或学号">
+            <el-input
+              v-model="navClass"
+              placeholder="请输入你审核的班级或学号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="selectMode">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="selectTime">
+              <el-option
+                v-for="item in time"
+                :key="item.time"
+                :label="item.time"
+                :value="item.time"
+                :disabled="item.isOpen"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button @click="filter" type="primary">筛选</el-button>
+          </el-form-item>
+          <!-- 审核人 -->
+          <el-form-item label="审核人">
+            <el-select v-model="author">
+              <el-option
+                v-for="item in authArray"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <!-- 打开班级索引按钮 -->
+          <el-form-item>
+            <el-button @click="showBanIndex" type="primary"
+              >打开班级导引</el-button
             >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-select v-model="selectTime">
-            <el-option
-              v-for="item in time"
-              :key="item.time"
-              :label="item.time"
-              :value="item.time"
-              :disabled="item.isOpen"
+          </el-form-item>
+          <!-- 点击下载审核标准 -->
+          <el-form-item>
+            <el-button @click="showBanIndex" type="primary"
+              >下载审核标准文档</el-button
             >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="filter" type="primary">筛选</el-button>
-        </el-form-item>
-        <!-- 审核人 -->
-        <el-form-item label="审核人">
-          <el-select v-model="author">
-            <el-option
-              v-for="item in authArray"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </div>
-    <!-- 表格区域 -->
-    <!-- 用户信息展示 -->
-    <el-alert
-      title="说明：如果自评总分数为0，系统自动默认设置为0分，并且第一、第二审核人为“无”，审核人不必再审核该项。审核人审核成功的标志：对应审核人下面有你的名字。若要修改分数，请直接点击审核进入修改并且提交即可"
-      type="warning"
-      effect="dark"
-    >
-    </el-alert>
-    <el-table
-      :data="checkData"
-      style="width: 100%"
-      stripe
-      border
-      max-height="690"
-      v-loading="waiting"
-    >
-      <el-table-column prop="stu_number" label="学号"> </el-table-column>
-      <el-table-column prop="stu_name" label="姓名"> </el-table-column>
-      <el-table-column prop="stu_class" label="班级"> </el-table-column>
-      <el-table-column prop="selfTotal" label="自评总分数"> </el-table-column>
-      <el-table-column prop="first_per" label="第一审核人"> </el-table-column>
-      <el-table-column prop="firstTotal" label="第一审核总分数">
-      </el-table-column>
-      <el-table-column prop="second_per" label="第二审核人"> </el-table-column>
-      <el-table-column prop="secondTotal" label="第二审核总分数">
-      </el-table-column>
-      <el-table-column label="审核状态">
-        <template slot-scope="checkState">
-          <el-tag :type="checkState.row.is_checked ? 'success' : 'info'">{{
-            checkState.row.is_checked == true ? "已审核" : "未完成审核"
-          }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="oper">
-          <el-button
-            type="primary"
-            :disabled="oper.row.selfTotal == 0 ? true : false"
-            @click="check(oper.row)"
-          >
-            审核
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 开启审核 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="checkShow"
-      width="80%"
-      :fullscreen="true"
-    >
-      <!-- 说明区域 -->
+          </el-form-item>
+        </el-form>
+      </div>
+      <!-- 表格区域 -->
+      <!-- 用户信息展示 -->
       <el-alert
-        title="说明：最终总分数以第二审核人为准，请根据规定正确的评估分数，不要跨级填写！"
+        title="说明：如果自评总分数为0，系统自动默认设置为0分，并且第一、第二审核人为“无”，审核人不必再审核该项。审核人审核成功的标志：对应审核人下面有你的名字。若要修改分数，请直接点击审核进入修改并且提交即可"
         type="warning"
         effect="dark"
       >
       </el-alert>
-      <!-- 表格区域 -->
       <el-table
-        :data="checkDialog"
+        :data="checkData"
         style="width: 100%"
         stripe
         border
         max-height="690"
         v-loading="waiting"
       >
-        <el-table-column prop="item_number" label="序号"> </el-table-column>
-        <el-table-column prop="description" label="描述"> </el-table-column>
-        <el-table-column prop="reason" label="加分原因"> </el-table-column>
-        <el-table-column prop="self_score" label="自评分数"> </el-table-column>
-        <!-- 第一审核人分数 -->
-        <el-table-column label="第一审核分数">
-          <template slot-scope="firstScore">
-            <el-input
-              v-model="firstScore.row.first.score"
-              placeholder="第一审核人分数"
-            ></el-input>
-          </template>
+        <el-table-column prop="stu_number" label="学号"> </el-table-column>
+        <el-table-column prop="stu_name" label="姓名"> </el-table-column>
+        <el-table-column prop="stu_class" label="班级"> </el-table-column>
+        <el-table-column prop="selfTotal" label="自评总分数"> </el-table-column>
+        <el-table-column prop="first_per" label="第一审核人"> </el-table-column>
+        <el-table-column prop="firstTotal" label="第一审核总分数">
         </el-table-column>
-        <!-- 第二审核人分数 -->
-        <el-table-column label="第二审核人分数">
-          <template slot-scope="secondScore">
-            <el-input
-              v-model="secondScore.row.second.score"
-              placeholder="第二审核人分数"
-            ></el-input>
-          </template>
+        <el-table-column prop="second_per" label="第二审核人">
         </el-table-column>
-        <el-table-column prop="is_checked" label="审核状态">
+        <el-table-column prop="secondTotal" label="第二审核总分数">
+        </el-table-column>
+        <el-table-column label="审核状态">
           <template slot-scope="checkState">
             <el-tag :type="checkState.row.is_checked ? 'success' : 'info'">{{
               checkState.row.is_checked == true ? "已审核" : "未完成审核"
@@ -156,39 +106,133 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="oper">
-            <el-button type="primary" @click="showProve(oper.row)">
-              查看材料
+            <el-button
+              type="primary"
+              :disabled="oper.row.selfTotal == 0 ? true : false"
+              @click="check(oper.row)"
+            >
+              审核
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <!-- 提交按钮 -->
-      <el-button @click="submitItem" class="btn fr" type="primary"
-        >提交</el-button
+      <!-- 开启审核 -->
+      <el-dialog
+        :title="title"
+        :visible.sync="checkShow"
+        width="80%"
+        :fullscreen="true"
       >
-    </el-dialog>
-    <el-dialog :title="picturesTitle" :visible.sync="showProves">
-      <div class="lazy_imgs">
-        <!-- 图片 -->
-        <el-image
-          v-for="url in pictures"
-          :src="url"
-          :preview-src-list="pictures"
-          :key="url"
-        ></el-image>
+        <!-- 说明区域 -->
+        <el-alert
+          title="说明：最终总分数以第二审核人为准，请根据规定正确的评估分数，不要跨级填写！"
+          type="warning"
+          effect="dark"
+        >
+        </el-alert>
+        <!-- 表格区域 -->
+        <el-table
+          :data="checkDialog"
+          style="width: 100%"
+          stripe
+          border
+          max-height="690"
+          v-loading="waiting"
+        >
+          <el-table-column prop="item_number" label="序号"> </el-table-column>
+          <el-table-column prop="description" label="描述"> </el-table-column>
+          <el-table-column prop="reason" label="加分原因"> </el-table-column>
+          <el-table-column prop="self_score" label="自评分数">
+          </el-table-column>
+          <!-- 第一审核人分数 -->
+          <el-table-column label="第一审核分数">
+            <template slot-scope="firstScore">
+              <el-input
+                v-model="firstScore.row.first.score"
+                placeholder="第一审核人分数"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <!-- 第二审核人分数 -->
+          <el-table-column label="第二审核人分数">
+            <template slot-scope="secondScore">
+              <el-input
+                v-model="secondScore.row.second.score"
+                placeholder="第二审核人分数"
+              ></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="is_checked" label="审核状态">
+            <template slot-scope="checkState">
+              <el-tag :type="checkState.row.is_checked ? 'success' : 'info'">{{
+                checkState.row.is_checked == true ? "已审核" : "未完成审核"
+              }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="oper">
+              <el-button type="primary" @click="showProve(oper.row)">
+                查看材料
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 提交按钮 -->
+        <el-button @click="submitItem" class="btn fr" type="primary"
+          >提交</el-button
+        >
+      </el-dialog>
+      <el-dialog :title="picturesTitle" :visible.sync="showProves">
+        <div class="lazy_imgs">
+          <!-- 图片 -->
+          <el-image
+            v-for="url in pictures"
+            :src="url"
+            :preview-src-list="pictures"
+            :key="url"
+          ></el-image>
+        </div>
+      </el-dialog>
+    </div>
+    <z-close v-else/>
+    <!-- 从左边划出的抽屉 -->
+    <el-drawer
+      :title="drawerData.title"
+      size="20%"
+      :visible.sync="drawer"
+      direction="ltr"
+    >
+      <div class="main">
+        <p>班级列表：</p>
+        <div
+          class="list"
+          v-for="(name, index) in drawerData.classes"
+          :key="index"
+        >
+          <p>
+            {{ name }}
+          </p>
+          <el-button @click="checkItem(name)" type="mini">筛选</el-button>
+        </div>
       </div>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import request from "@/services/request";
+import ZClose from "./z-close";
+import AdminOpen from "@/mixin/getAdminOpen"
 export default {
   name: "z-checking",
+  components: {
+    ZClose,
+  },
+  mixins:[AdminOpen],
   data() {
     return {
       // 审核的班级
-      navClass: "201819716",
+      navClass: "",
       // 按班级还是按学号，默认是按班级为1
       selectMode: 1,
       // 表格数据
@@ -229,6 +273,11 @@ export default {
       ],
       // 当前页
       currentPage: 1,
+      // 抽屉是否显示
+      drawer: false,
+      drawerData: {
+        title: "",
+      },
     };
   },
   methods: {
@@ -312,22 +361,18 @@ export default {
     },
     //获取审核时间
     async getTime() {
-      //如果缓存中有时间条目就获取，没有就从服务器重新请求
-      let timeTag = sessionStorage.getItem("time");
-      //从服务器重新请求
       this.waiting = true;
-      if (!timeTag) {
-        let res = await request({
-          url: "/api/score/gettimes",
+      let res = await request({
+        url: "/api/score/gettimes/?t=" + Math.random(),
+      });
+      if (res.code == 200) {
+        this.time = res.time;
+        res.time.some((v) => {
+          if (v.isOpen !== true) {
+            this.selectTime = v.time;
+            return false;
+          }
         });
-        if (res.code == 200) {
-          this.time = res.time;
-          this.selectTime = res.time[0].time;
-          sessionStorage.setItem("time", JSON.stringify(res.time));
-        }
-      } else {
-        this.time = JSON.parse(timeTag);
-        this.selectTime = this.time[0].time;
       }
       this.waiting = false;
     },
@@ -356,6 +401,38 @@ export default {
         this.checkData = data;
       }
       this.waiting = false;
+    },
+    // 显示左边抽屉弹出框，请求对应年级的数据
+    async showBanIndex() {
+      this.drawer = true;
+      let drawerCache = sessionStorage.getItem("drawer");
+      // 如果缓存不存在，重新获取数据
+      if (!drawerCache) {
+        let res = await request({
+          url: "/api/admin/getdrawer",
+        });
+        // console.log(res);
+        if (res.code == 200) {
+          const { data } = res;
+          this.drawerData = {
+            title: `${data.college.college_name} ${data.profession.profess_name} 班级导引`,
+            classes: data.classes,
+          };
+          // 保存数据
+          sessionStorage.setItem("drawer", JSON.stringify(data));
+        }
+      } else {
+        const data = JSON.parse(drawerCache);
+        this.drawerData = {
+          title: `${data.college.college_name} ${data.profession.profess_name} 班级导引`,
+          classes: data.classes,
+        };
+      }
+    },
+    // 点击抽屉中的审核时，去获取对应的数据
+    checkItem(item) {
+      this.navClass = item;
+      this.filter();
     },
     async submitItem() {
       // 获取数据
@@ -389,7 +466,7 @@ export default {
   },
   created() {
     //提示信息
-    // this.notify();
+    this.notify();
     this.getTime();
   },
   // 页面挂载完毕后执行回调
@@ -407,5 +484,14 @@ export default {
 .btn.fr {
   margin-top: 20px;
   margin-right: 50px;
+}
+
+.main {
+  padding: 20px;
+}
+.main .list {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
 }
 </style>
