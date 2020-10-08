@@ -4,6 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>审核表格</el-breadcrumb-item>
       <el-breadcrumb-item>审核</el-breadcrumb-item>
+      <z-refresh @click.native="refreshState" />
     </el-breadcrumb>
     <div v-if="isOpenAdmin">
       <!-- 主体区域 -->
@@ -62,12 +63,7 @@
               >打开班级导引</el-button
             >
           </el-form-item>
-          <!-- 点击下载审核标准 -->
-          <el-form-item>
-            <el-button @click="showBanIndex" type="primary"
-              >下载审核标准文档</el-button
-            >
-          </el-form-item>
+          
         </el-form>
       </div>
       <!-- 表格区域 -->
@@ -194,7 +190,7 @@
         </div>
       </el-dialog>
     </div>
-    <z-close v-else/>
+    <z-close v-else />
     <!-- 从左边划出的抽屉 -->
     <el-drawer
       :title="drawerData.title"
@@ -222,13 +218,15 @@
 <script>
 import request from "@/services/request";
 import ZClose from "./z-close";
-import AdminOpen from "@/mixin/getAdminOpen"
+import ZRefresh from "./z-refresh";
+import AdminOpen from "@/mixin/getAdminOpen";
 export default {
   name: "z-checking",
   components: {
     ZClose,
+    ZRefresh,
   },
-  mixins:[AdminOpen],
+  mixins: [AdminOpen],
   data() {
     return {
       // 审核的班级
@@ -366,6 +364,8 @@ export default {
         url: "/api/score/gettimes/?t=" + Math.random(),
       });
       if (res.code == 200) {
+        this.time = [];
+        this.selectTime = "";
         this.time = res.time;
         res.time.some((v) => {
           if (v.isOpen !== true) {
@@ -434,6 +434,12 @@ export default {
       this.navClass = item;
       this.filter();
     },
+    // 刷新状态
+    refreshState() {
+      this.getOpen();
+      this.getTime();
+      this.$message.success("刷新成功");
+    },
     async submitItem() {
       // 获取数据
       const dataArr = [];
@@ -469,8 +475,6 @@ export default {
     this.notify();
     this.getTime();
   },
-  // 页面挂载完毕后执行回调
-  mounted() {},
 };
 </script>
 <style scoped>

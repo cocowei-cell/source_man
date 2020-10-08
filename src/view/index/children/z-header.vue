@@ -9,7 +9,7 @@
       text-color="#606266"
     >
       <el-menu-item index="0" title="素质分审核系统" class="fl title"
-        >审核系统 | v0.0.1</el-menu-item
+        >审核系统 | v0.0.2</el-menu-item
       >
       <el-submenu index="1" class="userName fr">
         <template slot="title">{{ username }}</template>

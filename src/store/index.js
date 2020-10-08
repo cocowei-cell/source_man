@@ -3,7 +3,7 @@
  * @Author: zzz
  * @Date: 2020-09-02 12:53:41
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-10-05 22:13:59
+ * @LastEditTime: 2020-10-08 17:48:33
  */
 import Vue from "vue";
 import Vuex from "vuex";
@@ -23,10 +23,16 @@ const store = new Vuex.Store({
     index: 0,
     qqcode: "",
     headerIndex: "4",
+    // 错误数量
     errorCount: 0,
+    // 管理员是否开启
+    isOpen: false,
   },
   mutations: {
-    [setUserState](state, { isLogin, token, userInfo }) {
+    [setUserState](
+      state,
+      { isLogin, token, userInfo = { stu_number: "", stu_name: "" } }
+    ) {
       state.isLogin = isLogin;
       state.token = token;
       state.userInfo = userInfo;
@@ -46,11 +52,17 @@ const store = new Vuex.Store({
     setHeaderIndex(state, payload) {
       state.headerIndex = payload;
     },
+    // 修改审核错误数量
     modifyErrorCount(state, payload) {
       state.errorCount = payload;
     },
+    // 修改管理员权限是否开启
+    modifyOpen(state, payload) {
+      state.isOpen = payload;
+    },
   },
   actions: {
+    // 异步获取错误数量
     async getCountError({ commit }) {
       let res = await request({
         url: "/api/admin/getcount",

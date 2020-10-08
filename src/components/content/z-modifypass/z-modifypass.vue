@@ -161,6 +161,13 @@ export default {
         this.$refs.codeRef.refresh();
       } else {
         this.$message.success("密码修改成功，下次登录后生效！");
+        // 将所有输入框置空
+        this.form = {
+          old_stu_pass: "",
+          new_stu_pass: "",
+          code: "",
+          confirm: "",
+        };
       }
     },
   },

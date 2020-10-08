@@ -4,6 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>异议审核</el-breadcrumb-item>
       <el-breadcrumb-item>查看异议审核</el-breadcrumb-item>
+      <z-refresh @click.native="refreshState"></z-refresh>
     </el-breadcrumb>
     <el-table
       class="table_"
@@ -36,7 +37,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <z-close v-else/>
+    <z-close v-else />
     <!-- 错误信息展示框 -->
     <el-dialog :title="title" :visible.sync="dialogShown">
       <el-alert
@@ -95,13 +96,15 @@
 
 <script>
 import request from "@/services/request";
-import AdminOpen from "@/mixin/getAdminOpen"
+import AdminOpen from "@/mixin/getAdminOpen";
+import ZRefresh from "./z-refresh";
 import ZClose from "./z-close";
 export default {
   name: "z-error",
-  mixins:[AdminOpen],
+  mixins: [AdminOpen],
   components: {
-ZClose
+    ZClose,
+    ZRefresh,
   },
   data() {
     return {
@@ -121,10 +124,11 @@ ZClose
       let res = await request({
         url: "/api/admin/geterror",
       });
-      // console.log(res);
       if (res.code == 200) {
+        this.errorInfo = [];
         this.errorInfo = res.data;
       }
+      this.$store.dispatch("getCountError");
     },
     // 错误查看
     handleError({ along_user, item_id, is_checked, reason, _id }) {
@@ -143,12 +147,17 @@ ZClose
       // 保存图片
       this.pictures = item_id.pictures;
     },
-    // 证明材料展示
+    // 证明材料展示 
     showPicture() {
-      if(this.pictures.length===0) {
-        return this.$message.warning("无证明材料")
+      if (this.pictures.length === 0) {
+        return this.$message.warning("无证明材料");
       }
       this.pictureShown = true;
+    },
+    refreshState() {
+      this.getOpen();
+      this.getErrorItem();
+      this.$message.success("刷新成功");
     },
     // 处理提交
     async handleErrorSubmit() {
@@ -166,14 +175,19 @@ ZClose
         this.$message.success("修改成功");
         this.getErrorItem();
         // 重新获取错误数据数目
-        this.$store.dispatch('getCountError')
-        this.dialogShown = false;
+        this.$store.dispatch("getCountError");
+      } else if (res.code == 402) {
+        // 管理员关闭审核权限
+        this.refreshState();
+      } else {
+        this.$message.error(res.msg);
       }
+      this.dialogShown = false;
     },
   },
   created() {
     this.getErrorItem();
-  },
+  }
 };
 </script>
 <style scoped>

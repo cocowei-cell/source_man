@@ -13,12 +13,23 @@ export default {
   methods: {
     async getOpen() {
       let res = await request({
-        url: "/api/others/getisopen?t="+Math.random(),
+        url: "/api/others/getisopen?t=" + Math.random(),
       });
+      this.isOpenAdmin = false;
       this.isOpenAdmin = res.isOpen;
+      this.$store.commit("modifyOpen", res.isOpen);
     },
   },
   created() {
     this.getOpen();
   },
+  watch:{
+    "$store.state.isOpen": {
+      handler(newVal) {
+        this.isOpenAdmin = newVal;
+      },
+      deep: true,
+      immediate: true,
+    },
+  }
 };

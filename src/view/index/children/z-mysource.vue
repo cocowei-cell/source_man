@@ -18,6 +18,14 @@
           <span class="state"
             >状态：{{ state === false ? "未审核" : "已审核" }}</span
           >
+          <!-- 刷新数据 -->
+          <el-button
+            class="btn_refresh"
+            type="primary"
+            :loading="loading"
+            @click="refreshState"
+            >刷新状态</el-button
+          >
           <!-- 分数条目 -->
           <span class="fr">最终总分：{{ secondScore }}</span>
           <span class="fr">第一审核人总分：{{ firstScore }}</span>
@@ -139,6 +147,7 @@ export default {
         second: {},
       },
       showDialog: false,
+      loading: false,
     };
   },
   methods: {
@@ -203,6 +212,13 @@ export default {
         reason: "",
       };
       this.showDialog = true;
+    },
+    async refreshState() {
+      // 重新获取该学期的数据
+      this.loading = true;
+      this.tagTime = true;
+      await this.slectForm();
+      this.loading = false;
     },
     //提交错误
     async submitError() {

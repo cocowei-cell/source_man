@@ -62,11 +62,6 @@ export default [
         component: () => import("@/view/admin/children/z-checking"),
       },
       {
-        name: "mycheck",
-        path: "mycheck",
-        component: () => import("@/view/admin/children/z-mycheck"),
-      },
-      {
         name: "error",
         path: "error",
         component: () => import("@/view/admin/children/z-error"),

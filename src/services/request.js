@@ -3,12 +3,11 @@
  * @Author: zzz
  * @Date: 2020-09-03 13:39:06
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-09-28 16:55:32
+ * @LastEditTime: 2020-10-08 18:05:37
  */
 import axios from "axios";
 import qs from "qs";
-import { BaseURL } from "../config";
-
+import config from "@/config";
 
 /**
  * @description: 封装请求处理函数
@@ -18,7 +17,7 @@ import { BaseURL } from "../config";
 
 function request(options) {
   const instance = axios.create({
-    baseURL: BaseURL,
+    baseURL: config.mainURL,
     timeout: 8000,
   });
   //登录前的拦截器

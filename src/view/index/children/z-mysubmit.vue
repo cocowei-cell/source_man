@@ -102,7 +102,7 @@
         <!-- 提交 -->
         <el-form-item label="上传的材料">
           <el-upload
-            action="http://localhost:3001/upload"
+            :action="uploadURL"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
@@ -147,9 +147,10 @@
 import ZCenter from "@/components/content/z-center/z-center";
 import request from "@/services/request";
 import Mixin from "@/mixin/submitMixin"; //获取表格数据 混入
+import StaticURL from "@/mixin/staticURL";
 export default {
   name: "z-mysubmit",
-  mixins: [Mixin],
+  mixins: [Mixin, StaticURL],
   components: {
     ZCenter,
   },
@@ -204,7 +205,6 @@ export default {
       }
     },
     //获取筛选的学期，请求对应的数据
-
     async slectForm() {
       let time = this.time;
       if (time === "") {
@@ -223,15 +223,15 @@ export default {
       });
       //混合数据表格
       //提交表格置为空
-      this.submitInfo = [];
       if (res.data.length === 0) {
+        this.submitInfo = [];
         this.tagLod = false;
-        return;
+        return this.$message.warning("本学期暂无您的数据");
       }
       // 重新获取提交表格
-      this.getInfo();
-      //获取时间是否过期
-      // console.log(res);
+      this.submitInfo = [];
+      // 重新获取表格
+      await this.getInfo();
       // 混合表格 将所有表单项和有数据的项合并
       res.data.forEach((v) => {
         let item_number = v.item_number;
@@ -250,7 +250,6 @@ export default {
       this.tagLod = false;
     },
     addToInfo(data) {
-      this.submitInfo = [];
       let obj = {
         reason: "",
         pictures: [],
@@ -266,6 +265,9 @@ export default {
     },
     //查看对应的项目
     show(id) {
+      if (id.pictures.length == 0) {
+        return this.$message.warning("无图片");
+      }
       this.showItem = {
         dialogVisibleShow: true,
         itemNumber: `项目编号:${id.item_number}（点击图片查看大图）`,
@@ -353,7 +355,7 @@ export default {
       const temp_path = file.response.files[0].temp_path;
       //删除文件
       let res = await request({
-        url: "http://localhost:3001/delete",
+        url: this.deleteURL,
         method: "post",
         data: {
           temp_path,
@@ -398,7 +400,7 @@ export default {
     // 作判断，如果没有时间就不重新获取，否则造成首次打开出现表格信息的异常
     if (time) {
       this.time = time;
-      this.slectForm();
+      await this.slectForm();
     }
     await this.slectForm();
   },

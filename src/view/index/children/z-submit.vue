@@ -14,6 +14,13 @@
             >
             </el-option>
           </el-select>
+          <el-button
+            @click="refresh"
+            class="btn_refresh"
+            :loading="loading"
+            type="primary"
+            >刷新数据</el-button
+          >
         </div>
         <!-- 未开启管理员权限 -->
         <div class="auth_admin" v-if="!isOpen">
@@ -71,7 +78,7 @@
             <el-table-column label="材料(请上传图片类型文件)">
               <template slot-scope="proves">
                 <el-upload
-                  action="http://localhost:3001/upload"
+                  :action="uploadURL"
                   :on-preview="handlePreview"
                   :on-remove="handleRemove"
                   :before-remove="beforeRemove"
@@ -111,10 +118,11 @@
 <script>
 import ZCenter from "@/components/content/z-center/z-center";
 import request from "@/services/request";
+import StaticURL from "@/mixin/staticURL"; 
 import Mixin from "@/mixin/submitMixin"; //获取表格数据混入
 export default {
   name: "z-submit",
-  mixins: [Mixin],
+  mixins: [Mixin,StaticURL],
   components: {
     ZCenter,
   },
@@ -129,43 +137,39 @@ export default {
       itemNumber: "", //上传项目标号,
       score: 0, //上传时的总分数
       waiting: false,
+      loading: false,
     };
   },
   methods: {
     //获取审核时间
     async getTime() {
-      //如果缓存中有时间条目就获取，没有就从服务器重新请求
-      let timeTag = sessionStorage.getItem("time");
-      //从服务器重新请求
       this.waiting = true;
-      if (!timeTag) {
-        let res = await request({
-          url: "/api/score/gettimes",
-        });
-        if (res.code == 200) {
-          this.options = res.time;
-          sessionStorage.setItem("time", JSON.stringify(res.time));
-        }
-      } else {
-        this.options = JSON.parse(timeTag);
-      }
-      //  如果所有的学期均未开启审核就显示提示信息
-      for (let i = 0, len = this.options.length; i < len; i++) {
-        if (this.options[i].isOpen == true) {
-          this.isOpen = true;
-          this.time = this.options[i].time;
-          break;
+      let res = await request({
+        url: "/api/score/gettimes",
+      });
+      if (res.code == 200) {
+        this.options = [];
+        this.isOpen = false;
+        this.time = "";
+        this.options = res.time;
+        //  如果所有的学期均未开启审核就显示提示信息
+        for (let i = 0, len = this.options.length; i < len; i++) {
+          if (this.options[i].isOpen == true) {
+            this.isOpen = true;
+            this.time = this.options[i].time;
+            break;
+          }
         }
       }
       this.waiting = false;
     },
-
     addToInfo(data) {
       let obj = {
         reason: "",
         pictures: [],
         self_score: 0,
       };
+      this.submitInfo = [];
       // 追加到数组中
       data.forEach((item) => {
         this.submitInfo.push({
@@ -205,7 +209,7 @@ export default {
       const temp_path = file.response.files[0].temp_path;
       //删除文件
       let res = await request({
-        url: "http://localhost:3001/delete",
+        url: this.deleteURL,
         method: "post",
         data: {
           temp_path,
@@ -233,6 +237,15 @@ export default {
         total_score += +v.self_score;
       });
       this.score = total_score;
+    },
+    // 刷新数据
+    async refresh() {
+      //获取时间
+      this.loading = true;
+      await this.getTime();
+      //获取表格结构
+      await this.getInfo();
+      this.loading = false;
     },
     //上传
     async submit() {

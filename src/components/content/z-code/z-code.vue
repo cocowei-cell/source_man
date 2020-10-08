@@ -3,7 +3,7 @@
     <img
       class="img"
       @click="refresh"
-      src="http://localhost:3000/api/others/getcode"
+      :src="codeURL"
       alt="验证码"
       ref="imgCodeRef"
     />
@@ -12,18 +12,18 @@
 
 <script>
 import request from "@/services/request";
+import config from "@/config";
 export default {
   name: "z-code",
+  data() {
+    return {
+      codeURL: config.mainURL + "/api/others/getcode",
+    };
+  },
   methods: {
     refresh() {
-      this.$refs.imgCodeRef.src = `http://localhost:3000/api/others/getcode?t=${Math.random()}`;
+      this.$refs.imgCodeRef.src = `${this.codeURL}?t=${Math.random()}`;
     },
-
-    /**
-     * @description: 验证code是否合法
-     * @param {String}
-     * @return {Bolean}
-     */
     async authCode(code) {
       let res = await request({
         url: "/api/others/authcode",
@@ -34,7 +34,7 @@ export default {
         },
       });
       if (res.code == 400) {
-        this.refresh()
+        this.refresh();
         return false;
       } else {
         return true;
